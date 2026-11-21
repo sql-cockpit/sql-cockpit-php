@@ -15,6 +15,7 @@ final class TransportException extends \RuntimeException
     public const CONNECTION = 'connection';
     public const TIMEOUT = 'timeout';
     public const TOO_LARGE = 'too_large';
+    public const TLS = 'tls';
 
     public function __construct(public readonly string $kind, int $status = 0)
     {

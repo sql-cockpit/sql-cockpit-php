@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 - 2026-11-21
+
+- The built-in cURL transport uses the Windows certificate store when PHP has no CA bundle configured, so https works out of the box on Windows. Certificates are still verified.
+- A certificate that cannot be verified now gives a ConnectionException that says so.
+
 ## 0.1.0 - 2026-11-21
 
 First release.

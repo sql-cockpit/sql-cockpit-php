@@ -87,6 +87,12 @@ final class CurlTransport implements Transport
                 return \strlen($chunk);
             },
         ];
+        // PHP on Windows often has no CA bundle configured. Use the Windows certificate store then,
+        // so certificates are still verified.
+        if (\PHP_OS_FAMILY === 'Windows' && \defined('CURLSSLOPT_NATIVE_CA')
+            && (string) ini_get('curl.cainfo') === '' && (string) ini_get('openssl.cafile') === '') {
+            $options[CURLOPT_SSL_OPTIONS] = \constant('CURLSSLOPT_NATIVE_CA');
+        }
         if ($request->body !== null) {
             $options[CURLOPT_POSTFIELDS] = $request->body;
         } elseif ($method !== 'GET') {
@@ -105,7 +111,12 @@ final class CurlTransport implements Transport
             throw new TransportException(TransportException::TOO_LARGE, $status);
         }
         if ($ok === false || $errno !== 0) {
-            throw new TransportException($errno === CURLE_OPERATION_TIMEDOUT ? TransportException::TIMEOUT : TransportException::CONNECTION);
+            throw new TransportException(match ($errno) {
+                CURLE_OPERATION_TIMEDOUT => TransportException::TIMEOUT,
+                // SSL connect error, peer certificate, CA certificate, CA bundle problems.
+                35, 51, 58, 60, 77, 83, 90, 91 => TransportException::TLS,
+                default => TransportException::CONNECTION,
+            });
         }
 
         /** @var array<string, string> $headers */

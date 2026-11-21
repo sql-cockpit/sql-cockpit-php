@@ -217,6 +217,10 @@ final class Requester
                 'response_too_large',
                 $status,
             ),
+            TransportException::TLS => new ConnectionException(
+                'Could not make a secure connection to the SQL Cockpit portal: its TLS certificate could not be verified. '
+                . 'Check that PHP has a CA bundle (curl.cainfo or openssl.cafile in php.ini).'
+            ),
             default => new ConnectionException('Could not reach the SQL Cockpit portal. Check portalUrl and your connection.'),
         };
     }

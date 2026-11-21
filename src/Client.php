@@ -27,7 +27,7 @@ use SqlCockpit\Resource\TenantsResource;
  */
 final class Client implements \JsonSerializable
 {
-    public const VERSION = '0.1.0';
+    public const VERSION = '0.1.1';
     public const DEFAULT_PORTAL_URL = 'https://portal.sql-cockpit.com';
     public const API_PATH = '/api/portal/v1';
     public const DEFAULT_TIMEOUT = 20.0;
